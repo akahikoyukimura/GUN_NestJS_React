@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "email": "admin@example.com",
+    "pass": "$2b$10$XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "name": "Admin",
+    "role": "admin",
+    "isActive": true,
+    "emailVerified": true,
+    "failedLoginAttempts": 0,
+    "lockedUntil": null,
+    "createdAt": "2026-08-14T10:00:00.000Z",
+    "updatedAt": "2026-08-14T10:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "email": "john@test.com",
+    "pass": "$2b$10$1wCSjTfzmv8eSCobAWi19OJTW5TE8VnWUvojQYt22Y7b7AQqABbha",
+    "name": "John",
+    "role": "USER",
+    "isActive": true,
+    "emailVerified": false,
+    "failedLoginAttempts": 0,
+    "lockedUntil": null,
+    "createdAt": "2026-08-14T22:47:27.942Z",
+    "updatedAt": "2026-08-14T22:47:27.942Z"
+  }
+]
