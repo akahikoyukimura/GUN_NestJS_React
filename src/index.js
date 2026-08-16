@@ -6,6 +6,7 @@ import "./style.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 import {
   Home,
