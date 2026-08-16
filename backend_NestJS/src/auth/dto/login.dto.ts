@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, Matches, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 
 export class LoginDto {
   @IsNotEmpty()
@@ -7,9 +7,5 @@ export class LoginDto {
 
   @IsNotEmpty()
   @MinLength(6)
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&]).+$/, {
-    message:
-      'Password must contain at least one letter, one number, and one special character',
-  })
-  password!: string;
+  pass!: string;
 }
