@@ -7,6 +7,7 @@ const Login = () => {
   const [pass, setPass] = useState("");
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState("");
 
   const HandleLogin = async (e) => {
     e.preventDefault();
@@ -45,10 +46,9 @@ const Login = () => {
     <>
       <div className="login">
         <div className="pt-5 pb-5">
-          <div className="container box col-md-5 col-lg-5 col-sm-8 pt-3 pb-3 custom-bb">
+          <div className="container box col-md-6 col-lg-5 col-sm-8 pt-3 pb-3 custom-bb">
             <h1 className="text-center title">Welcome</h1>
             <p className=" text-center">Please log in to continue</p>
-            <hr />
             <div className="text-center">
               <img
                 src="./assets/logo.png"
@@ -98,28 +98,31 @@ const Login = () => {
                       ></i>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <input
-                        type="checkbox"
-                        id="vehicle1"
-                        name="vehicle1"
-                        value="Bike"
-                      />
-                      <label for="vehicle1"> Remenber me</label>
-                      <br></br>{" "}
-                    </div>
-                    <div class="col">
-                      <a
-                        className="text-decoration-none text-reset fst-italic"
-                        href="/term.pdf"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Forgot password?{" "}
-                      </a>{" "}
-                    </div>
-                  </div>
+                  <div className="d-flex justify-content-between align-items-center w-100">
+  <div className="d-flex align-items-center">
+    <input
+      type="checkbox"
+      id="rememberMe"
+      checked={rememberMe}
+      onChange={(e) => setRememberMe(e.target.checked)}
+      name="rememberMe"
+      className="c-checkbox"
+    />
+
+    <label htmlFor="rememberMe" className="ms-1 mt-2">
+      Remember me
+    </label>
+  </div>
+
+  <a
+    className="text-decoration-none text-reset fst-italic"
+    href="/term.pdf"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Forgot password?
+  </a>
+</div>
                   <div className="my-3">
                     <p>
                       Don't have an account yet?{" "}
