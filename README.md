@@ -3,6 +3,7 @@
 npm run dev
 
 ## info 
+``
 Request
    ↓
 Middleware      → "Do something before Nest handles the request"
@@ -18,6 +19,7 @@ Controller
 Interceptor      → "Process the response"
    ↓
 Response
+``
 
 ## Zod --- form validation ---
 - **step 1** : 
@@ -40,11 +42,11 @@ build custom hook to initialize zod on the form :
 };``
 
 - **step 3** :
-* call to custom hook on the form page:
+-call to custom hook on the form page:
 ``const {register, handleSubmit, formState: { errors, isSubmitting },} = useLoginForm();``
-* use handleSubmit to execute validation before calling the api
+-use handleSubmit to execute validation before calling the api
 ``<form  onSubmit={handleSubmit(HandleLogin)}>``
-* use register to update and handle value validation (no need to use onClick and {value}) :
+-use register to update and handle value validation (no need to use onClick and {value}) :
 ``<input type="email"
 // value={email}
 // onChange={(e) => setEmail(e.target.value)}
