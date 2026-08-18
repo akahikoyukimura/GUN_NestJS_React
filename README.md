@@ -39,20 +39,28 @@ build custom hook to initialize zod on the form :
     mode: "onBlur",
     defaultValues: {email: ""},
   });
-};```
-
+};
+```
 - **step 3** :
 -call to custom hook on the form page:
-```const {register, handleSubmit, formState: { errors, isSubmitting },} = useLoginForm();```
+```
+const {register, handleSubmit, formState: { errors, isSubmitting },} = useLoginForm();
+```
 -use handleSubmit to execute validation before calling the api
-```<form  onSubmit={handleSubmit(HandleLogin)}>```
+```
+<form  onSubmit={handleSubmit(HandleLogin)}>
+```
 -use register to update and handle value validation (no need to use onClick and {value}) :
-```<input type="email"
+```
+<input type="email"
 // value={email}
 // onChange={(e) => setEmail(e.target.value)}
-{...register("email")}/>```
+{...register("email")}/>
+```
 
 - **step 4** :
 show error :
-``` {errors.email && ({errors.email.message})}```
+```
+ {errors.email && ({errors.email.message})}
+ ```
 
