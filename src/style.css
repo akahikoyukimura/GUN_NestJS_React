@@ -27,6 +27,7 @@ body {
   background-image: url("./../public/assets/log3.jpg");
   background-repeat: no-repeat;
   background-size: cover;
+   background-attachment: fixed;
   /* filter: brightness(0.5); */
 }
 
@@ -69,6 +70,7 @@ body {
   font-size: 16px;
   border-bottom: 1px solid #757575ab;
       border-radius: unset;
+          align-content: center;
 
   color: #747474;
 }
@@ -187,6 +189,16 @@ body {
     transform: translateX(0);
     opacity: 1;
   }
+}
+
+
+.c-invalid{
+background-color: #4400007d;
+    border-bottom: 1px solid #ba2222ab;
+}
+
+.c-invalid-text{
+  font-size: 12px;
 }
 
 

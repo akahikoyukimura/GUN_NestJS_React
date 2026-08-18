@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Footer } from "../components";
-import Alert from "../components/Alert";
 import Toast from "../components/Toast";
 import { TOAST_TYPES } from "../constants/toastTypes";
+import { loginSchema } from "../schemas/authSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useLoginForm } from "../hooks/useLoginForm";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,6 +14,11 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
+    const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useLoginForm();
 
   const HandleLogin = async (e) => {
     e.preventDefault();
@@ -21,9 +28,12 @@ const Login = () => {
         headers: {
           "Content-Type": "application/json",
         },
+             credentials: "include",
+      
         body: JSON.stringify({
           email,
           pass,
+          rememberMe,
         }),
       });
 
@@ -37,9 +47,13 @@ const Login = () => {
         return;
       }
 
-      localStorage.setItem("access_token", data.access_token);
-
-      localStorage.setItem("user", JSON.stringify(data.user));
+      if (rememberMe) {
+        localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+      } else {
+        sessionStorage.setItem("access_token", data.access_token);
+        sessionStorage.setItem("user", JSON.stringify(data.user));
+      }
 
       navigate("/about");
     } catch (error) {
@@ -48,7 +62,7 @@ const Login = () => {
       // setLoading(false);
     }
   };
-
+ console.log("errors:", errors);
   return (
     <>
       <div className="login">
@@ -67,26 +81,43 @@ const Login = () => {
             </div>
             <div className="row my-4">
               <div className="col-md-8 col-lg-8 col-sm-8 mx-auto">
-                <form onSubmit={HandleLogin} className="text-center">
+                <form  onSubmit={handleSubmit(HandleLogin)} className="text-center">
                   <div className="my-3">
-                    <div className="input-group flex-nowrap c-input-group">
+                    <div 
+                     className={`input-group flex-nowrap c-input-group  ${
+      errors.email ? "c-invalid" : ""
+    }`}
+                    >
                       <span className="input-group-text input-icon">
                         <i className="bi bi-envelope-fill"></i>
                       </span>
                       <input
                         placeholder="Email ID "
-                        className="input"
+                         className="input"
                         name="text"
                         type="text"
                         type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        // value={email}
+                        // onChange={(e) => setEmail(e.target.value)}
                         id="floatingInput"
+
+
+    {...register("email")}
                       />
+
                     </div>
+                      {errors.email && (
+    <div className="text-danger text-left c-invalid-text">
+      {errors.email.message}
+    </div>
+  )}
                   </div>
                   <div className="my-3">
-                    <div className="input-group flex-nowrap c-input-group">
+                    <div 
+                     className={`input-group flex-nowrap c-input-group  ${
+      errors.email ? "c-invalid" : ""
+    }`}
+                    >
                       <span className="input-group-text input-icon">
                         <i className="bi bi-key-fill"></i>
                       </span>
@@ -95,9 +126,10 @@ const Login = () => {
                         className="input"
                         name="text"
                         type={showPassword ? "text" : "password"}
-                        value={pass}
-                        onChange={(e) => setPass(e.target.value)}
+                        // value={pass}
+                        // onChange={(e) => setPass(e.target.value)}
                         id="floatingPassword"
+                         {...register("pass")}
                       ></input>
                       <i
                         className={`px-2 input-icon bi ${
@@ -106,6 +138,11 @@ const Login = () => {
                         onClick={() => setShowPassword(!showPassword)}
                       ></i>
                     </div>
+                          {errors.pass && (
+    <div className="text-danger text-left c-invalid-text">
+      {errors.pass.message}
+    </div>
+  )}
                   </div>
                   <div className="d-flex justify-content-between align-items-center w-100">
                     <div className="d-flex align-items-center">
@@ -113,6 +150,7 @@ const Login = () => {
                         type="checkbox"
                         id="rememberMe"
                         checked={rememberMe}
+                        
                         onChange={(e) => setRememberMe(e.target.checked)}
                         name="rememberMe"
                         className="c-checkbox"
