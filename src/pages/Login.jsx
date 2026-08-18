@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Footer, Navbar } from "../components";
+import { Footer } from "../components";
+import Alert from "../components/Alert";
+import Toast from "../components/Toast";
+import { TOAST_TYPES } from "../constants/toastTypes";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState("");
 
   const HandleLogin = async (e) => {
     e.preventDefault();
@@ -25,10 +29,13 @@ const Login = () => {
 
       const data = await response.json();
 
-      // if (!response.ok) {
-      //   setError(data.message || "Login failed");
-      //   return;
-      // }
+      console.log("td--------------", data);
+      console.log("t--------------", response);
+
+      if (!response.ok) {
+        setError(data.message || "Login failed");
+        return;
+      }
 
       localStorage.setItem("access_token", data.access_token);
 
@@ -45,6 +52,8 @@ const Login = () => {
   return (
     <>
       <div className="login">
+        <Toast type={TOAST_TYPES.ERROR} message={error} />
+
         <div className="pt-5 pb-5">
           <div className="container box col-md-6 col-lg-5 col-sm-8 pt-3 pb-3 custom-bb">
             <h1 className="text-center title">Welcome</h1>
@@ -56,17 +65,17 @@ const Login = () => {
                 className="img-fluid logo"
               />
             </div>
-            <div class="row my-4">
+            <div className="row my-4">
               <div className="col-md-8 col-lg-8 col-sm-8 mx-auto">
                 <form onSubmit={HandleLogin} className="text-center">
-                  <div class="my-3">
-                    <div class="input-group flex-nowrap c-input-group">
-                      <span class="input-group-text input-icon">
-                        <i class="bi bi-envelope-fill"></i>
+                  <div className="my-3">
+                    <div className="input-group flex-nowrap c-input-group">
+                      <span className="input-group-text input-icon">
+                        <i className="bi bi-envelope-fill"></i>
                       </span>
                       <input
                         placeholder="Email ID "
-                        class="input"
+                        className="input"
                         name="text"
                         type="text"
                         type="email"
@@ -76,14 +85,14 @@ const Login = () => {
                       />
                     </div>
                   </div>
-                  <div class="my-3">
-                    <div class="input-group flex-nowrap c-input-group">
-                      <span class="input-group-text input-icon">
-                        <i class="bi bi-key-fill"></i>
+                  <div className="my-3">
+                    <div className="input-group flex-nowrap c-input-group">
+                      <span className="input-group-text input-icon">
+                        <i className="bi bi-key-fill"></i>
                       </span>
                       <input
                         placeholder="Password"
-                        class="input"
+                        className="input"
                         name="text"
                         type={showPassword ? "text" : "password"}
                         value={pass}
@@ -99,30 +108,30 @@ const Login = () => {
                     </div>
                   </div>
                   <div className="d-flex justify-content-between align-items-center w-100">
-  <div className="d-flex align-items-center">
-    <input
-      type="checkbox"
-      id="rememberMe"
-      checked={rememberMe}
-      onChange={(e) => setRememberMe(e.target.checked)}
-      name="rememberMe"
-      className="c-checkbox"
-    />
+                    <div className="d-flex align-items-center">
+                      <input
+                        type="checkbox"
+                        id="rememberMe"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                        name="rememberMe"
+                        className="c-checkbox"
+                      />
 
-    <label htmlFor="rememberMe" className="ms-1 mt-2">
-      Remember me
-    </label>
-  </div>
+                      <label htmlFor="rememberMe" className="ms-1 mt-2">
+                        Remember me
+                      </label>
+                    </div>
 
-  <a
-    className="text-decoration-none text-reset fst-italic"
-    href="/term.pdf"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    Forgot password?
-  </a>
-</div>
+                    <a
+                      className="text-decoration-none text-reset fst-italic"
+                      href="/term.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Forgot password?
+                    </a>
+                  </div>
                   <div className="my-3">
                     <p>
                       Don't have an account yet?{" "}
@@ -135,7 +144,7 @@ const Login = () => {
                     </p>
                   </div>
                   <div className="text-center">
-                    <button class="my-2 mx-auto btn btn-dark" type="submit">
+                    <button className="my-2 mx-auto btn btn-dark" type="submit">
                       Login
                     </button>
                   </div>
