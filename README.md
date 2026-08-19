@@ -64,3 +64,41 @@ show error :
  {errors.email && ({errors.email.message})}
  ```
 
+## .env
+all variables should start with "REACT_APP_"
+
+## Axios configuration 
+- **step 1** : create axios 
+```
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  credentials: "include"
+});
+
+```
+- **step 2** : create Api service that call axios and get data
+```
+export const login = async (data) => {
+  try {const response = await api.post("/auth/login", data);
+    return response.data;
+  } catch (error) {
+    throw error; // throw handleApiError(error); (custom error handler)
+  }
+};
+```
+- **step 3** : call the serive to haandle data 
+```
+const HandleLogin = async (e) => {
+    try {
+       const data = await login(e);
+      navigate("/about");
+    } catch (error) {
+        setError(error);
+    }
+  };
+```
+
+

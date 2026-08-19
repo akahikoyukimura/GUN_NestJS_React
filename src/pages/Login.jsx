@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Footer } from "../components";
-import Toast from "../components/Toast";
+import Toast from "../components/Toast/Toast";
 import { TOAST_TYPES } from "../constants/toastTypes";
 import { loginSchema } from "../schemas/authSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginForm } from "../hooks/useLoginForm";
+import { login } from "../api/authApi";
+import Loader from "../components/Loader/Loader";
+import { useLoading } from "../contexts/LoadingContext";
+import { useToast } from "../contexts/ToastContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,38 +18,36 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
-    const {
+  const { setLoading } = useLoading();
+  const { showToast, hideToast } = useToast();
+  const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useLoginForm();
 
   const HandleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch("http://localhost:3001/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-             credentials: "include",
-      
-        body: JSON.stringify({
-          email,
-          pass,
-          rememberMe,
-        }),
-      });
+    //setError("");
 
-      const data = await response.json();
+    setLoading(true);
+    //e.preventDefault();
+    console.log("FORM DATA:", e);
+    try {
+      // const response = await fetch("http://localhost:3001/auth/login", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //        credentials: "include",
+
+      //   body: JSON.stringify(e),
+
+      // });
+      const data = await login(e);
+
+      //const data = await response.json();
 
       console.log("td--------------", data);
-      console.log("t--------------", response);
-
-      if (!response.ok) {
-        setError(data.message || "Login failed");
-        return;
-      }
 
       if (rememberMe) {
         localStorage.setItem("access_token", data.access_token);
@@ -57,16 +59,38 @@ const Login = () => {
 
       navigate("/about");
     } catch (error) {
+      console.log("catch-------", error);
+      showToast(
+        TOAST_TYPES.ERROR,
+        error.message
+          ? error.message
+          : error.error
+            ? error.error
+            : "Login failed",
+      );
+      // setError(
+      //   error.message
+      //     ? error.message
+      //     : error.error
+      //       ? error.error
+      //       : "Login failed",
+      // );
+      // return;
+
       // setError("Server error");
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
- console.log("errors:", errors);
+  console.log("errors:", errors);
+  console.log("error:", error);
+  console.log("msg:", error);
+  //console.log("load",loading);
+
   return (
     <>
       <div className="login">
-        <Toast type={TOAST_TYPES.ERROR} message={error} />
+        {/* <Toast type={TOAST_TYPES.ERROR} message={error} /> */}
 
         <div className="pt-5 pb-5">
           <div className="container box col-md-6 col-lg-5 col-sm-8 pt-3 pb-3 custom-bb">
@@ -81,42 +105,42 @@ const Login = () => {
             </div>
             <div className="row my-4">
               <div className="col-md-8 col-lg-8 col-sm-8 mx-auto">
-                <form  onSubmit={handleSubmit(HandleLogin)} className="text-center">
+                <form
+                  onSubmit={handleSubmit(HandleLogin)}
+                  className="text-center"
+                >
                   <div className="my-3">
-                    <div 
-                     className={`input-group flex-nowrap c-input-group  ${
-      errors.email ? "c-invalid" : ""
-    }`}
+                    <div
+                      className={`input-group flex-nowrap c-input-group  ${
+                        errors.email ? "c-invalid" : ""
+                      }`}
                     >
                       <span className="input-group-text input-icon">
                         <i className="bi bi-envelope-fill"></i>
                       </span>
                       <input
                         placeholder="Email ID "
-                         className="input"
+                        className="input"
                         name="text"
                         type="text"
                         type="email"
                         // value={email}
                         // onChange={(e) => setEmail(e.target.value)}
-                        id="floatingInput"
 
-
-    {...register("email")}
+                        {...register("email")}
                       />
-
                     </div>
-                      {errors.email && (
-    <div className="text-danger text-left c-invalid-text">
-      {errors.email.message}
-    </div>
-  )}
+                    {errors.email && (
+                      <div className="text-danger text-left c-invalid-text">
+                        {errors.email.message}
+                      </div>
+                    )}
                   </div>
                   <div className="my-3">
-                    <div 
-                     className={`input-group flex-nowrap c-input-group  ${
-      errors.email ? "c-invalid" : ""
-    }`}
+                    <div
+                      className={`input-group flex-nowrap c-input-group  ${
+                        errors.pass ? "c-invalid" : ""
+                      }`}
                     >
                       <span className="input-group-text input-icon">
                         <i className="bi bi-key-fill"></i>
@@ -129,7 +153,7 @@ const Login = () => {
                         // value={pass}
                         // onChange={(e) => setPass(e.target.value)}
                         id="floatingPassword"
-                         {...register("pass")}
+                        {...register("pass")}
                       ></input>
                       <i
                         className={`px-2 input-icon bi ${
@@ -138,11 +162,11 @@ const Login = () => {
                         onClick={() => setShowPassword(!showPassword)}
                       ></i>
                     </div>
-                          {errors.pass && (
-    <div className="text-danger text-left c-invalid-text">
-      {errors.pass.message}
-    </div>
-  )}
+                    {errors.pass && (
+                      <div className="text-danger text-left c-invalid-text">
+                        {errors.pass.message}
+                      </div>
+                    )}
                   </div>
                   <div className="d-flex justify-content-between align-items-center w-100">
                     <div className="d-flex align-items-center">
@@ -150,7 +174,6 @@ const Login = () => {
                         type="checkbox"
                         id="rememberMe"
                         checked={rememberMe}
-                        
                         onChange={(e) => setRememberMe(e.target.checked)}
                         name="rememberMe"
                         className="c-checkbox"
@@ -182,7 +205,10 @@ const Login = () => {
                     </p>
                   </div>
                   <div className="text-center">
-                    <button className="my-2 mx-auto btn btn-dark" type="submit">
+                    <button
+                      className="my-2 mx-auto btn btn-dark"
+                      type="submit disabled={isSubmitting}"
+                    >
                       Login
                     </button>
                   </div>
