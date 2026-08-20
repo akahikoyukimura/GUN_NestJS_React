@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Footer } from "../components";
-import Toast from "../components/Toast/Toast";
 import { TOAST_TYPES } from "../constants/toastTypes";
-import { loginSchema } from "../schemas/authSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginForm } from "../hooks/useLoginForm";
 import { login } from "../api/authApi";
 import Loader from "../components/Loader/Loader";
@@ -28,6 +25,7 @@ const Login = () => {
 
   const HandleLogin = async (e) => {
     //setError("");
+    hideToast()
 
     setLoading(true);
     //e.preventDefault();
@@ -57,7 +55,7 @@ const Login = () => {
         sessionStorage.setItem("user", JSON.stringify(data.user));
       }
 
-      navigate("/about");
+      navigate("/home");
     } catch (error) {
       console.log("catch-------", error);
       showToast(
@@ -89,7 +87,7 @@ const Login = () => {
 
   return (
     <>
-      <div className="login">
+      <div className="login screen-page">
         {/* <Toast type={TOAST_TYPES.ERROR} message={error} /> */}
 
         <div className="pt-5 pb-5">
@@ -122,7 +120,6 @@ const Login = () => {
                         placeholder="Email ID "
                         className="input"
                         name="text"
-                        type="text"
                         type="email"
                         // value={email}
                         // onChange={(e) => setEmail(e.target.value)}
@@ -198,7 +195,7 @@ const Login = () => {
                       Don't have an account yet?{" "}
                       <Link
                         to="/register"
-                        className="text-decoration-underline text-info"
+                        className="text-decoration-underline text-reset fst-italic"
                       >
                         Sign up
                       </Link>{" "}
@@ -206,10 +203,10 @@ const Login = () => {
                   </div>
                   <div className="text-center">
                     <button
-                      className="my-2 mx-auto btn btn-dark"
-                      type="submit disabled={isSubmitting}"
+                      className="button "
+                      type="submit"
                     >
-                      Login
+                       Login
                     </button>
                   </div>
                 </form>

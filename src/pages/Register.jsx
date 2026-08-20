@@ -1,58 +1,228 @@
-import React from 'react'
-import { Footer, Navbar } from "../components";
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Footer } from "../components";
+import { TOAST_TYPES } from "../constants/toastTypes";
+import { useLoginForm } from "../hooks/useLoginForm";
+import { login } from "../api/authApi";
+import { useLoading } from "../contexts/LoadingContext";
+import { useToast } from "../contexts/ToastContext";
+
 const Register = () => {
-    return (
-        <>
-            <Navbar />
-            <div className="container my-3 py-3">
-                <h1 className="text-center">Register</h1>
-                <hr />
-                <div className="row my-4 h-100">
-                    <div className="col-md-4 col-lg-4 col-sm-8 mx-auto">
-                        <form>
-                            <div className="form my-3">
-                                <label for="Name">Full Name</label>
-                                <input
-                                    type="email"
-                                    className="form-control"
-                                    id="Name"
-                                    placeholder="Enter Your Name"
-                                />
-                            </div>
-                            <div className="form my-3">
-                                <label for="Email">Email address</label>
-                                <input
-                                    type="email"
-                                    className="form-control"
-                                    id="Email"
-                                    placeholder="name@example.com"
-                                />
-                            </div>
-                            <div className="form  my-3">
-                                <label for="Password">Password</label>
-                                <input
-                                    type="password"
-                                    className="form-control"
-                                    id="Password"
-                                    placeholder="Password"
-                                />
-                            </div>
-                            <div className="my-3">
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState("");
+  const { setLoading } = useLoading();
+  const { showToast, hideToast } = useToast();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useLoginForm();
+
+  const HandleLogin = async (e) => {
+    //setError("");
+    hideToast()
+
+    setLoading(true);
+    //e.preventDefault();
+    console.log("FORM DATA:", e);
+    try {
+      // const response = await fetch("http://localhost:3001/auth/login", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //        credentials: "include",
+
+      //   body: JSON.stringify(e),
+
+      // });
+      const data = await login(e);
+
+      //const data = await response.json();
+
+      console.log("td--------------", data);
+
+      if (rememberMe) {
+        localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+      } else {
+        sessionStorage.setItem("access_token", data.access_token);
+        sessionStorage.setItem("user", JSON.stringify(data.user));
+      }
+
+      navigate("/about");
+    } catch (error) {
+      console.log("catch-------", error);
+      showToast(
+        TOAST_TYPES.ERROR,
+        error.message
+          ? error.message
+          : error.error
+            ? error.error
+            : "Login failed",
+      );
+      // setError(
+      //   error.message
+      //     ? error.message
+      //     : error.error
+      //       ? error.error
+      //       : "Login failed",
+      // );
+      // return;
+
+      // setError("Server error");
+    } finally {
+      setLoading(false);
+    }
+  };
+  console.log("errors:", errors);
+  console.log("error:", error);
+  console.log("msg:", error);
+  //console.log("load",loading);
+
+  return (
+    <>
+      <div className="login">
+        {/* <Toast type={TOAST_TYPES.ERROR} message={error} /> */}
+
+        <div className="pt-5 pb-5">
+          <div className="container box col-md-6 col-lg-5 col-sm-8 pt-3 pb-3 custom-bb">
+            <h1 className="text-center title">Welcome</h1>
+            <p className=" text-center">Please log in to continue</p>
+            <div className="text-center">
+              <img
+                src="./assets/logo.png"
+                alt="Logo"
+                className="img-fluid logo"
+              />
+            </div>
+            <div className="row my-4">
+              <div className="col-md-8 col-lg-8 col-sm-8 mx-auto">
+                <form
+                  onSubmit={handleSubmit(HandleLogin)}
+                  className="text-center"
+                >
+                  <div className="my-3">
+                    <div
+                      className={`input-group flex-nowrap c-input-group  ${
+                        errors.email ? "c-invalid" : ""
+                      }`}
+                    >
+                      <span className="input-group-text input-icon">
+                        <i className="bi bi-envelope-fill"></i>
+                      </span>
+                      <input
+                        placeholder="Email ID "
+                        className="input"
+                        name="text"
+                        type="text"
+                        type="email"
+                        // value={email}
+                        // onChange={(e) => setEmail(e.target.value)}
+
+                        {...register("email")}
+                         autoComplete="username"
+                      />
+                    </div>
+                    {errors.email && (
+                      <div className="text-danger text-left c-invalid-text">
+                        {errors.email.message}
+                      </div>
+                    )}
+                  </div>
+                  <div className="my-3">
+                    <div
+                      className={`input-group flex-nowrap c-input-group  ${
+                        errors.pass ? "c-invalid" : ""
+                      }`}
+                    >
+                      <span className="input-group-text input-icon">
+                        <i className="bi bi-key-fill"></i>
+                      </span>
+                      <input
+                        placeholder="Password"
+                        className="input"
+                        name="text"
+                        type={showPassword ? "text" : "password"}
+                        // value={pass}
+                        // onChange={(e) => setPass(e.target.value)}
+                        id="floatingPassword"
+                        {...register("pass")}
+                        autoComplete="current-password"
+                      ></input>
+                      <i
+                        className={`px-2 input-icon bi ${
+                          showPassword ? "bi-eye-slash-fill" : "bi-eye-fill  "
+                        } password-toggle`}
+                        onClick={() => setShowPassword(!showPassword)}
+                      ></i>
+                    </div>
+                    {errors.pass && (
+                      <div className="text-danger text-left c-invalid-text">
+                        {errors.pass.message}
+                      </div>
+                    )}
+                  </div>
+                  <div className="d-flex justify-content-between align-items-center w-100">
+                    <div className="d-flex align-items-center">
+                      <input
+                        type="checkbox"
+                        id="rememberMe"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                        name="rememberMe"
+                        className="c-checkbox"
+                      />
+
+                      <label htmlFor="rememberMe" className="ms-1 mt-2">
+                        Remember me
+                      </label>
+                    </div>
+
+                    <a
+                      className="text-decoration-none text-reset fst-italic"
+                      href="/term.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Forgot password?
+                    </a>
+                  </div>
+                   <div className="my-3">
                                 <p>Already has an account? <Link to="/login" className="text-decoration-underline text-info">Login</Link> </p>
                             </div>
-                            <div className="text-center">
-                                <button className="my-2 mx-auto btn btn-dark" type="submit" disabled>
-                                    Register
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                  <div className="text-center">
+                    <button
+                      className="my-2 mx-auto btn btn-dark"
+                      type="submit" 
+                    >
+                      Register
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
-            <Footer />
-        </>
-    )
-}
+            <p className="custom-text-italic text-center ">
+              By continuing, you agree to our Terms of Use and acknowledge that
+              :
+            </p>
+            <p className="custom-text-italic text-center mx-5">
+              You are responsible for keeping your account credentials secure.
+              All purchases must comply with our regulations. Product
+              availability, prices, and information may change without notice.
+              You agree to use this website.
+            </p>
+          </div>
+        </div>
 
-export default Register
+        <Footer />
+      </div>
+    </>
+  );
+};
+
+export default Register;

@@ -63,6 +63,12 @@ body {
   color: #acacac;
 }
 
+.input:-webkit-autofill{
+  -webkit-box-shadow: none;
+  -webkit-text-fill-color: #acacac;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 .input-icon {
   background: none;
   border: none;
@@ -140,3 +146,86 @@ background-color: #4400007d;
   font-size: 12px;
 }
 
+
+
+
+
+
+.button {
+    --main-color: rgb(191 191 191);
+   --main-bg-color: rgb(119 119 119 / 34%);
+    --pattern-color: rgb(170 170 170 / 7%);
+    filter: hue-rotate(0deg);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5rem;
+    background: radial-gradient(
+      circle,
+      var(--main-bg-color) 0%,
+      rgba(0, 0, 0, 0) 95%
+    ),
+    linear-gradient(var(--pattern-color) 1px, transparent 1px),
+    linear-gradient(to right, var(--pattern-color) 1px, transparent 1px);
+    background-size: cover,
+    15px 15px,
+    15px 15px;
+    background-position: center center,
+    center center,
+    center center;
+    border-image: radial-gradient(
+      circle,
+      var(--main-color) 0%,
+      rgba(0, 0, 0, 0) 100%
+    )
+    1;
+    border-width: 1px 0 1px 0;
+    color: var(--main-color);
+    padding: 1rem 3rem;
+    font-weight: 700;
+    font-size: 1.5rem;
+    transition: background-size 0.2s ease-in-out;
+    width: 100%;
+}
+
+.button:hover {
+  background-size:
+    cover,
+    10px 10px,
+    10px 10px; cursor: crosshair;
+
+}
+.button:active {
+  filter: hue-rotate(250deg);
+}
+
+
+
+
+
+
+
+.screen-page {
+  animation: revealPage 1.2s ease-out forwards;
+}
+
+@keyframes revealPage {
+  0% {
+    opacity: 0;
+    filter: blur(20px) brightness(0.15);
+  }
+
+  35% {
+    opacity: 0.4;
+    filter: blur(12px) brightness(0.35);
+  }
+
+  65% {
+    opacity: 0.75;
+    filter: blur(5px) brightness(0.7);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+  }
+}
