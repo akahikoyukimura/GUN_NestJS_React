@@ -167,10 +167,10 @@ const Login = () => {
                     </button>
                   </div>
                 </form>
-                <div class="d-flex align-items-center my-3">
-                  <hr class="flex-grow-1" />
-                  <span class="mx-3 ">or</span>
-                  <hr class="flex-grow-1" />
+                <div className="d-flex align-items-center my-3">
+                  <hr className="flex-grow-1" />
+                  <span className="mx-3 ">or</span>
+                  <hr className="flex-grow-1" />
                 </div>
                 <button
                   type="button"
