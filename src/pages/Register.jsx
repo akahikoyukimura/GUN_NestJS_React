@@ -1,98 +1,59 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Footer } from "../components";
 import { TOAST_TYPES } from "../constants/toastTypes";
-import { useLoginForm } from "../hooks/useLoginForm";
-import { login } from "../api/authApi";
+import { registerUser } from "../api/authApi";
 import { useLoading } from "../contexts/LoadingContext";
 import { useToast } from "../contexts/ToastContext";
+import { useRegisterForm } from "../hooks/useRegisterForm";
+import "./Register.css";
 
 const Register = () => {
-  const [email, setEmail] = useState("");
-  const [pass, setPass] = useState("");
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState("");
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { setLoading } = useLoading();
   const { showToast, hideToast } = useToast();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useLoginForm();
+  } = useRegisterForm();
 
-  const HandleLogin = async (e) => {
-    //setError("");
-    hideToast()
-
+  const HandleRegister = async (e) => {
+    hideToast();
     setLoading(true);
-    //e.preventDefault();
-    console.log("FORM DATA:", e);
     try {
-      // const response = await fetch("http://localhost:3001/auth/login", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //        credentials: "include",
-
-      //   body: JSON.stringify(e),
-
-      // });
-      const data = await login(e);
-
-      //const data = await response.json();
-
-      console.log("td--------------", data);
-
-      if (rememberMe) {
-        localStorage.setItem("access_token", data.access_token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-      } else {
-        sessionStorage.setItem("access_token", data.access_token);
-        sessionStorage.setItem("user", JSON.stringify(data.user));
-      }
-
-      navigate("/about");
+      // call api
+      const { ConfirmPass, ...requestData } = e;
+      const data = await registerUser(requestData);
+      // show success toast
+      showToast(TOAST_TYPES.SUCCESS, data.message ? data.message : "Success");
+      // redirect to login
+      navigate("/login");
     } catch (error) {
-      console.log("catch-------", error);
       showToast(
         TOAST_TYPES.ERROR,
         error.message
           ? error.message
           : error.error
             ? error.error
-            : "Login failed",
+            : "Registration failed",
       );
-      // setError(
-      //   error.message
-      //     ? error.message
-      //     : error.error
-      //       ? error.error
-      //       : "Login failed",
-      // );
-      // return;
-
-      // setError("Server error");
     } finally {
       setLoading(false);
     }
   };
-  console.log("errors:", errors);
-  console.log("error:", error);
-  console.log("msg:", error);
-  //console.log("load",loading);
-
   return (
     <>
-      <div className="login">
-        {/* <Toast type={TOAST_TYPES.ERROR} message={error} /> */}
-
+      <div className="login screen-page">
         <div className="pt-5 pb-5">
           <div className="container box col-md-6 col-lg-5 col-sm-8 pt-3 pb-3 custom-bb">
             <h1 className="text-center title">Welcome</h1>
-            <p className=" text-center">Please log in to continue</p>
+            <p className=" text-center ">
+              Begin your mission by telling us who you are.Your informations are
+              TOP secret
+            </p>
             <div className="text-center">
               <img
                 src="./assets/logo.png"
@@ -103,9 +64,32 @@ const Register = () => {
             <div className="row my-4">
               <div className="col-md-8 col-lg-8 col-sm-8 mx-auto">
                 <form
-                  onSubmit={handleSubmit(HandleLogin)}
+                  onSubmit={handleSubmit(HandleRegister)}
                   className="text-center"
                 >
+                  <div className="my-3">
+                    <div
+                      className={`input-group flex-nowrap c-input-group  ${
+                        errors.name ? "c-invalid" : ""
+                      }`}
+                    >
+                      <span className="input-group-text input-icon">
+                        <i className="bi bi-envelope-fill"></i>
+                      </span>
+                      <input
+                        placeholder="Full name"
+                        className="input"
+                        name="name"
+                        type="text"
+                        {...register("name")}
+                      />
+                    </div>
+                    {errors.name && (
+                      <div className="text-danger text-left c-invalid-text">
+                        {errors.name.message}
+                      </div>
+                    )}
+                  </div>
                   <div className="my-3">
                     <div
                       className={`input-group flex-nowrap c-input-group  ${
@@ -118,14 +102,9 @@ const Register = () => {
                       <input
                         placeholder="Email ID "
                         className="input"
-                        name="text"
-                        type="text"
+                        name="email"
                         type="email"
-                        // value={email}
-                        // onChange={(e) => setEmail(e.target.value)}
-
                         {...register("email")}
-                         autoComplete="username"
                       />
                     </div>
                     {errors.email && (
@@ -146,13 +125,10 @@ const Register = () => {
                       <input
                         placeholder="Password"
                         className="input"
-                        name="text"
+                        name="pass"
                         type={showPassword ? "text" : "password"}
-                        // value={pass}
-                        // onChange={(e) => setPass(e.target.value)}
                         id="floatingPassword"
                         {...register("pass")}
-                        autoComplete="current-password"
                       ></input>
                       <i
                         className={`px-2 input-icon bi ${
@@ -167,43 +143,72 @@ const Register = () => {
                       </div>
                     )}
                   </div>
-                  <div className="d-flex justify-content-between align-items-center w-100">
-                    <div className="d-flex align-items-center">
-                      <input
-                        type="checkbox"
-                        id="rememberMe"
-                        checked={rememberMe}
-                        onChange={(e) => setRememberMe(e.target.checked)}
-                        name="rememberMe"
-                        className="c-checkbox"
-                      />
-
-                      <label htmlFor="rememberMe" className="ms-1 mt-2">
-                        Remember me
-                      </label>
-                    </div>
-
-                    <a
-                      className="text-decoration-none text-reset fst-italic"
-                      href="/term.pdf"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                  <div className="my-3">
+                    <div
+                      className={`input-group flex-nowrap c-input-group  ${
+                        errors.ConfirmPass ? "c-invalid" : ""
+                      }`}
                     >
-                      Forgot password?
-                    </a>
+                      <span className="input-group-text input-icon">
+                        <i className="bi bi-key-fill"></i>
+                      </span>
+                      <input
+                        placeholder="Confirm password"
+                        className="input"
+                        name="ConfirmPass"
+                        type={showConfirmPassword ? "text" : "password"}
+                        id="floatingConfirmPassword"
+                        {...register("ConfirmPass")}
+                      ></input>
+                      <i
+                        className={`px-2 input-icon bi ${
+                          showConfirmPassword
+                            ? "bi-eye-slash-fill"
+                            : "bi-eye-fill  "
+                        } password-toggle`}
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                      ></i>
+                    </div>
+                    {errors.ConfirmPass && (
+                      <div className="text-danger text-left c-invalid-text">
+                        {errors.ConfirmPass.message}
+                      </div>
+                    )}
                   </div>
-                   <div className="my-3">
-                                <p>Already has an account? <Link to="/login" className="text-decoration-underline text-info">Login</Link> </p>
-                            </div>
+                  <div className="my-3">
+                    <p>
+                      Already has an account?{" "}
+                      <Link
+                        to="/login"
+                        className="text-decoration-underline text-reset fst-italic"
+                      >
+                        Login
+                      </Link>{" "}
+                    </p>
+                  </div>
                   <div className="text-center">
                     <button
-                      className="my-2 mx-auto btn btn-dark"
-                      type="submit" 
+                      className="button "
+                      type="submit"
+                      disabled={isSubmitting}
                     >
                       Register
                     </button>
                   </div>
                 </form>
+                <div class="d-flex align-items-center my-3">
+                  <hr class="flex-grow-1" />
+                  <span class="mx-3 ">or</span>
+                  <hr class="flex-grow-1" />
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary w-100 c-google"
+                >
+                  Sign up with Google
+                </button>
               </div>
             </div>
             <p className="custom-text-italic text-center ">
@@ -218,7 +223,6 @@ const Register = () => {
             </p>
           </div>
         </div>
-
         <Footer />
       </div>
     </>

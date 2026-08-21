@@ -35,7 +35,6 @@ export class UsersService {
 
     const user: User = {
       id: generateId(users),
-
       email: createUserDto.email,
       pass: hashedPassword,
       name: createUserDto.name,

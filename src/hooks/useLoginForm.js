@@ -7,8 +7,8 @@ export const useLoginForm = () => {
     resolver: zodResolver(loginSchema),
     mode: "onBlur",
     defaultValues: {
-      email: "",
-      pass: "",
+      email: "john@test.com",
+      pass: "azerty12*",
       rememberMe: false,
     },
   });

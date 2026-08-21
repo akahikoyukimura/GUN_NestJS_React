@@ -1,20 +1,16 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Footer } from "../components";
 import { TOAST_TYPES } from "../constants/toastTypes";
 import { useLoginForm } from "../hooks/useLoginForm";
 import { login } from "../api/authApi";
-import Loader from "../components/Loader/Loader";
 import { useLoading } from "../contexts/LoadingContext";
 import { useToast } from "../contexts/ToastContext";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [pass, setPass] = useState("");
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState("");
   const { setLoading } = useLoading();
   const { showToast, hideToast } = useToast();
   const {
@@ -24,29 +20,12 @@ const Login = () => {
   } = useLoginForm();
 
   const HandleLogin = async (e) => {
-    //setError("");
-    hideToast()
-
+    hideToast();
     setLoading(true);
-    //e.preventDefault();
-    console.log("FORM DATA:", e);
     try {
-      // const response = await fetch("http://localhost:3001/auth/login", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //        credentials: "include",
-
-      //   body: JSON.stringify(e),
-
-      // });
+      // API call
       const data = await login(e);
-
-      //const data = await response.json();
-
-      console.log("td--------------", data);
-
+      // save token and user
       if (rememberMe) {
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("user", JSON.stringify(data.user));
@@ -54,10 +33,9 @@ const Login = () => {
         sessionStorage.setItem("access_token", data.access_token);
         sessionStorage.setItem("user", JSON.stringify(data.user));
       }
-
+      // navigate to home page
       navigate("/home");
     } catch (error) {
-      console.log("catch-------", error);
       showToast(
         TOAST_TYPES.ERROR,
         error.message
@@ -66,30 +44,13 @@ const Login = () => {
             ? error.error
             : "Login failed",
       );
-      // setError(
-      //   error.message
-      //     ? error.message
-      //     : error.error
-      //       ? error.error
-      //       : "Login failed",
-      // );
-      // return;
-
-      // setError("Server error");
     } finally {
       setLoading(false);
     }
   };
-  console.log("errors:", errors);
-  console.log("error:", error);
-  console.log("msg:", error);
-  //console.log("load",loading);
-
   return (
     <>
       <div className="login screen-page">
-        {/* <Toast type={TOAST_TYPES.ERROR} message={error} /> */}
-
         <div className="pt-5 pb-5">
           <div className="container box col-md-6 col-lg-5 col-sm-8 pt-3 pb-3 custom-bb">
             <h1 className="text-center title">Welcome</h1>
@@ -123,7 +84,6 @@ const Login = () => {
                         type="email"
                         // value={email}
                         // onChange={(e) => setEmail(e.target.value)}
-
                         {...register("email")}
                       />
                     </div>
@@ -147,8 +107,6 @@ const Login = () => {
                         className="input"
                         name="text"
                         type={showPassword ? "text" : "password"}
-                        // value={pass}
-                        // onChange={(e) => setPass(e.target.value)}
                         id="floatingPassword"
                         {...register("pass")}
                       ></input>
@@ -175,12 +133,10 @@ const Login = () => {
                         name="rememberMe"
                         className="c-checkbox"
                       />
-
                       <label htmlFor="rememberMe" className="ms-1 mt-2">
                         Remember me
                       </label>
                     </div>
-
                     <a
                       className="text-decoration-none text-reset fst-italic"
                       href="/term.pdf"
@@ -205,11 +161,23 @@ const Login = () => {
                     <button
                       className="button "
                       type="submit"
+                      disabled={isSubmitting}
                     >
-                       Login
+                      Login
                     </button>
                   </div>
                 </form>
+                <div class="d-flex align-items-center my-3">
+                  <hr class="flex-grow-1" />
+                  <span class="mx-3 ">or</span>
+                  <hr class="flex-grow-1" />
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary w-100 c-google"
+                >
+                  Login with Google
+                </button>
               </div>
             </div>
             <p className="custom-text-italic text-center ">
@@ -224,7 +192,6 @@ const Login = () => {
             </p>
           </div>
         </div>
-
         <Footer />
       </div>
     </>

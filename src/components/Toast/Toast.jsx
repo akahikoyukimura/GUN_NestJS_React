@@ -1,3 +1,4 @@
+import { TOAST_TYPES } from "../../constants/toastTypes";
 import "./Toast.css";
 
 const Toast = ({ type, message, onClose }) => {
@@ -5,12 +6,26 @@ const Toast = ({ type, message, onClose }) => {
     return null;
   }
 
+  let className;
+  switch (type) {
+    case TOAST_TYPES.SUCCESS:
+      className = "success";
+      break;
+    case TOAST_TYPES.WARNING:
+      className = "warning";
+      break;
+    case TOAST_TYPES.ERROR:
+      className = "error";
+      break;
+    default:
+      break;
+  }
+
   return (
-    <div className={`error-toast c-toast ${type}`}>
+    <div className={`${className}-toast c-toast `}>
       <div className="error-toast-content d-flex">
         <span>{message}</span>
-
-        <button className="error-toast-close" onClick={onClose}>
+        <button className={`${className}-toast-close`} onClick={onClose}>
           ×
         </button>
       </div>

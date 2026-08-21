@@ -1,14 +1,8 @@
 .c-toast {
-  color: #cf2828ab;
-  background-color: #1f0b0b;
+  position: fixed;
   border: none;
   border-radius: unset;
   font-size: smaller;
-  border-bottom: 1px solid #cf2828ab;
-}
-
-.error-toast {
-  position: fixed;
   top: 20px;
   right: 20px;
   z-index: 9999;
@@ -23,6 +17,19 @@
   animation: slideIn 0.4s ease-out;
 }
 
+.error-toast {
+  color: #cf2828ab;
+  background-color: #1f0b0b;
+
+  border-bottom: 1px solid #cf2828ab;
+}
+
+.success-toast {
+  color: #c8c8c8ab;
+  background-color: #4f4f4fa8;
+  border-bottom: 1px solid #8f8e8eab;
+}
+
 .error-toast-content {
   display: flex;
   align-items: center;
@@ -34,6 +41,15 @@
   border: none;
   background: transparent;
   color: #cf2828ab;
+
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.success-toast-close {
+  border: none;
+  background: transparent;
+  color: #dfd1d1ab;
 
   font-size: 24px;
   font-weight: bold;

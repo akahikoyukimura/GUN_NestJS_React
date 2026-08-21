@@ -1,0 +1,8 @@
+.c-google {
+  cursor: crosshair !important;
+  border-color: #595959;
+  color: #8f8e8e;
+}
+.btn-outline-secondary:focus {
+  box-shadow: none;
+}

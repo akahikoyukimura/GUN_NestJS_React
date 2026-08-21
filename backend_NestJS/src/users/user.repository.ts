@@ -6,9 +6,7 @@ import { User } from './entities/user.entity';
 export class UserRepository {
   private readonly fileName = 'users.json';
 
-  constructor(
-    private readonly db: JsonDatabaseService,
-  ) {}
+  constructor(private readonly db: JsonDatabaseService) {}
 
   async findAll(): Promise<User[]> {
     return this.db.read<User>(this.fileName);
@@ -17,7 +15,7 @@ export class UserRepository {
   async findByEmail(email: string): Promise<User | undefined> {
     const users = await this.findAll();
 
-    return users.find(user => user.email === email);
+    return users.find((user) => user.email === email);
   }
 
   async save(user: User): Promise<User> {
